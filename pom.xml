@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.zglong</groupId>
-    <artifactId>example</artifactId>
+    <artifactId>camunda-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>camunda-example</name>
     <description>Demo project for Spring Boot</description>
@@ -12,61 +12,55 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
-        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
-        <swagger-ui.version>3.20.9</swagger-ui.version>
+        <spring-boot.version>2.4.3</spring-boot.version>
+        <swagger-ui.version>4.0.0</swagger-ui.version>
         <springfox.version>2.9.2</springfox.version>
         <knife4j.version>3.0.3</knife4j.version>
     </properties>
 
     <dependencies>
+        <!-- groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>2.4.21</version>
         </dependency>
+
         <dependency>
             <groupId>org.codehaus.groovy.modules.http-builder</groupId>
             <artifactId>http-builder</artifactId>
             <version>0.7.1</version>
         </dependency>
-        <!--fegin组件-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <version>2021.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>2021.1</version>
-        </dependency>
+        <!-- camunda rest api -->
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
             <version>7.15.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm.extension.swagger</groupId>
-            <artifactId>camunda-bpm-swagger-json</artifactId>
-            <version>7.8.0</version>
-        </dependency>
+
+
         <!-- spin-->
         <dependency>
             <groupId>org.camunda.spin</groupId>
             <artifactId>camunda-spin-dataformat-all</artifactId>
             <version>1.9.0</version>
         </dependency>
-        <!-- swagger-->
+
+        <!-- camunda rest  openapi-->
+        <!-- http://localhost:11001/swagger.json -->
+        <dependency>
+            <groupId>org.camunda.bpm.extension.swagger</groupId>
+            <artifactId>camunda-bpm-swagger-json</artifactId>
+            <version>7.8.0</version>
+        </dependency>
+        <!-- camunda swagger-->
+        <!-- http://localhost:11001/webjars/swagger-ui/3.20.9/index.html?docExpansion=false&url=/swagger.json -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
             <version>${swagger-ui.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>swagger-ui-themes</artifactId>
@@ -77,29 +71,30 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-swagger-ui</artifactId>-->
-<!--            <version>${springfox.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.xiaoymin</groupId>-->
-<!--            <artifactId>knife4j-spring-boot-starter</artifactId>-->
-<!--            <version>2.0.3</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox.version}</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.xiaoymin</groupId>-->
+        <!--            <artifactId>knife4j-spring-boot-starter</artifactId>-->
+        <!--            <version>2.0.3</version>-->
+        <!--        </dependency>-->
         <!-- HTTP 连接器-->
         <dependency>
             <groupId>org.camunda.connect</groupId>
             <artifactId>camunda-connect-bom</artifactId>
             <version>1.5.2</version>
             <scope>import</scope>
-            <type>pom</type></dependency>
-       <!-- 邮件连接器-->
-        <dependency>
-            <groupId>org.camunda.bpm.extension</groupId>
-            <artifactId>camunda-bpm-mail-core</artifactId>
-            <version>1.3.1-SNAPSHOT</version>
+            <type>pom</type>
         </dependency>
+        <!-- 邮件连接器-->
+        <!--        <dependency>
+                    <groupId>org.camunda.bpm.extension</groupId>
+                    <artifactId>camunda-bpm-mail-core</artifactId>
+                    <version>1.3.1-SNAPSHOT</version>
+                </dependency>-->
         <!-- 全局监听连接器-->
         <dependency>
             <groupId>org.camunda.bpm.extension.reactor</groupId>
@@ -132,11 +127,6 @@
             <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
             <version>7.15.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.camunda.bpm.springboot</groupId>-->
-<!--            <artifactId>camunda-bpm-spring-boot-starter</artifactId>-->
-<!--            <version>7.15.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -180,19 +170,20 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bom</artifactId>
+                <version>7.15.0</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>

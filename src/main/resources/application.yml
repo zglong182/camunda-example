@@ -16,26 +16,10 @@ spring:
     # 数据源名称
     name: mysql
     # 数据库连接地址
-    url: jdbc:mysql://127.0.0.1:3306/camunda_engine?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://127.0.0.1:3306/camunda-example?serverTimezone=UTC&characterEncoding=UTF-8
     # 数据库用户名&密码：
     username: root
     password: 123456
-    # 数据库连接地址
-#    url: jdbc:mysql://106.13.25.231:3306/camunda_engine?serverTimezone=UTC&characterEncoding=UTF-8
-#    # 数据库用户名&密码：
-#    username: camunda
-#    password: camunda
-    nacos:
-      config:
-        enabled: false
-        #        namespace: 89737892-33eb-432f-9266-b2ff43314ece
-        server-addr: localhost:8848
-        file-extension: yaml
-      discovery:
-        enabled:
-        service: ${spring.application.name}
-        #        namespace: 89737892-33eb-432f-9266-b2ff43314ece
-        server-addr: localhost:8848
 camunda:
   bpm:
     # 管理员
