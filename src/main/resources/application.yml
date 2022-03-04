@@ -1,0 +1,56 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 11001
+
+# rest-api
+# http://localhost:11001/engine-rest/engine/hybpm
+# 应用名称
+spring:
+  application:
+    name: camunda-example
+  # 数据库驱动：
+  datasource:
+    # 连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 数据源名称
+    name: mysql
+    # 数据库连接地址
+    url: jdbc:mysql://127.0.0.1:3306/camunda_engine?serverTimezone=UTC&characterEncoding=UTF-8
+    # 数据库用户名&密码：
+    username: root
+    password: 123456
+    # 数据库连接地址
+#    url: jdbc:mysql://106.13.25.231:3306/camunda_engine?serverTimezone=UTC&characterEncoding=UTF-8
+#    # 数据库用户名&密码：
+#    username: camunda
+#    password: camunda
+    nacos:
+      config:
+        enabled: false
+        #        namespace: 89737892-33eb-432f-9266-b2ff43314ece
+        server-addr: localhost:8848
+        file-extension: yaml
+      discovery:
+        enabled:
+        service: ${spring.application.name}
+        #        namespace: 89737892-33eb-432f-9266-b2ff43314ece
+        server-addr: localhost:8848
+camunda:
+  bpm:
+    # 管理员
+    admin-user:
+      id: admin
+      password: admin
+    # 自动部署
+    auto-deployment-enabled: false
+    # 自动部署路径
+    deployment-resource-pattern: bpmn/*.bpmn
+    # 流程引擎名称
+#    process-engine-name: hybpm
+    authorization:
+      enabled: false
+    webapp:
+      application-path: /camunda
+    filter:
+      create: All tasks

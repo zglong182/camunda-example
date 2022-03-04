@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gch0ro" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="Process_1appvzh" name="审批流程" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_18gxapy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_18gxapy" sourceRef="StartEvent_1" targetRef="Activity_0gl1445" />
+    <bpmn:sequenceFlow id="Flow_109vgmw" sourceRef="Activity_0gl1445" targetRef="Activity_06evnk2" />
+    <bpmn:userTask id="Activity_0gl1445" name="提交表单" camunda:assignee="admin">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="form" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="method">POST</camunda:inputParameter>
+          <camunda:inputParameter name="payload">{"name":"Zglong","password":"123456"}
+                        </camunda:inputParameter>
+          <camunda:inputParameter name="headers">
+            <camunda:map>
+              <camunda:entry key="Content-Type">application/json;charset=UTF-8</camunda:entry>
+              <camunda:entry key="token">${token}</camunda:entry>
+            </camunda:map>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="url">http://localhost:11001/http-connect</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18gxapy</bpmn:incoming>
+      <bpmn:outgoing>Flow_109vgmw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0197sxo</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0i75xdi" name="审批表单" camunda:assignee="admin">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="method" />
+          <camunda:inputParameter name="payload" />
+          <camunda:inputParameter name="headers">
+            <camunda:map>
+              <camunda:entry key="Content-Type">application/json;charset=UTF-8</camunda:entry>
+              <camunda:entry key="token">${token}</camunda:entry>
+            </camunda:map>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="url" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16izsya</bpmn:incoming>
+      <bpmn:outgoing>Flow_179vue4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_06evnk2" name="调用服务">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{"name":"Zglong","password":"123456"}
+                        </camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json;charset=UTF-8</camunda:entry>
+                <camunda:entry key="token">${token}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:11001/http-connect</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_109vgmw</bpmn:incoming>
+      <bpmn:outgoing>Flow_16izsya</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0gxilml">
+      <bpmn:incoming>Flow_179vue4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_179vue4" sourceRef="Activity_0i75xdi" targetRef="Event_0gxilml" />
+    <bpmn:sequenceFlow id="Flow_16izsya" sourceRef="Activity_06evnk2" targetRef="Activity_0i75xdi" />
+    <bpmn:sequenceFlow id="Flow_0197sxo" sourceRef="Activity_0gl1445" targetRef="Activity_0z5z60n" />
+    <bpmn:scriptTask id="Activity_0z5z60n" name="执行脚本" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0197sxo</bpmn:incoming>
+      <bpmn:script>var data = JSON.stringify({
+  "name": "zglong",
+  "password": "xjj"
+});
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function() {
+  if(this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "http://localhost:11001/operate/add");
+xhr.setRequestHeader("Content-Type", "application/json");
+
+xhr.send(data);</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1appvzh">
+      <bpmndi:BPMNEdge id="Flow_0197sxo_di" bpmnElement="Flow_0197sxo">
+        <di:waypoint x="300" y="157" />
+        <di:waypoint x="300" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16izsya_di" bpmnElement="Flow_16izsya">
+        <di:waypoint x="520" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_179vue4_di" bpmnElement="Flow_179vue4">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="802" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_109vgmw_di" bpmnElement="Flow_109vgmw">
+        <di:waypoint x="350" y="117" />
+        <di:waypoint x="420" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18gxapy_di" bpmnElement="Flow_18gxapy">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="250" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18idy5h_di" bpmnElement="Activity_0gl1445">
+        <dc:Bounds x="250" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zvjryc_di" bpmnElement="Activity_0i75xdi">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h3se1p_di" bpmnElement="Activity_06evnk2">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gxilml_di" bpmnElement="Event_0gxilml">
+        <dc:Bounds x="802" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dkgfc5_di" bpmnElement="Activity_0z5z60n">
+        <dc:Bounds x="250" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

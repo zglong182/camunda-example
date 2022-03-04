@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0kqntj5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="addAndaub" name="加减签" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1vjlnq7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1vjlnq7" sourceRef="StartEvent_1" targetRef="Activity_1r0gx7m">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="JavaScript"></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1r0gx7m" name="节点A" camunda:assignee="admin">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="Groovy">println '----------------------------------------- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; get taskName'
+def taskService = task.getProcessEngine().getTaskService();
+def taskName = taskService.createTaskQuery().taskDefinitionKey(task.getTaskDefinitionKey()).singleResult().getName();
+println(taskName);
+
+println '----------------------------------------- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; get businessKey'
+def runtimeService = task.getProcessEngine().getRuntimeService();
+def businessKey = runtimeService.createProcessInstanceQuery().activityIdIn(task.getTaskDefinitionKey()).singleResult().getBusinessKey();
+println(businessKey);
+println '----------------------------------------- &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; set Variable'
+def map = new HashMap&lt;String, Object&gt;();
+def userList = new ArrayList&lt;String&gt;()
+userList.add("admin")
+task.setVariable("userList", userList)</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vjlnq7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bsg16n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1bsg16n" sourceRef="Activity_1r0gx7m" targetRef="Activity_1q4h6nv" />
+    <bpmn:userTask id="Activity_1q4h6nv" name="节点B" camunda:assignee="${user}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="Groovy">package cn.zglong.example.camunda.controller
+
+import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.ContentType
+import groovyx.net.http.Method
+
+
+def http = new HTTPBuilder('http://localhost:11001')
+String manager = '';
+http.request(Method.POST, ContentType.JSON) {
+    req -&gt;
+        uri.path = '/operate/add'
+        def params = ['id': 1, "name": 'zglong']
+//        uri.query = params
+        body = params
+        response.success = {
+            resp, reader -&gt;
+                assert resp.statusLine.statusCode == 200
+                println reader.name
+                manager = reader.name
+        }
+        response.'404' = {
+            println 'Not found'
+        }
+}
+println manager
+task.setVariable("manager", manager)
+
+
+</camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1bsg16n</bpmn:incoming>
+      <bpmn:outgoing>Flow_067kzcb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13kua9i</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${userList}" camunda:elementVariable="user">
+        <bpmn:completionCondition xsi:type="bpmn:tFormalExpression">${nrOfCompletedInstances/nrOfInstances == 1}</bpmn:completionCondition>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_07rpc8e">
+      <bpmn:incoming>Flow_067kzcb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_067kzcb" sourceRef="Activity_1q4h6nv" targetRef="Event_07rpc8e" />
+    <bpmn:sequenceFlow id="Flow_13kua9i" sourceRef="Activity_1q4h6nv" targetRef="Activity_1u3rtby" />
+    <bpmn:userTask id="Activity_1u3rtby" name="自动节点" camunda:assignee="${manager}">
+      <bpmn:incoming>Flow_13kua9i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ej11rx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ej11rx" sourceRef="Activity_1u3rtby" targetRef="Activity_125xuob" />
+    <bpmn:manualTask id="Activity_125xuob">
+      <bpmn:incoming>Flow_0ej11rx</bpmn:incoming>
+    </bpmn:manualTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="addAndaub">
+      <bpmndi:BPMNEdge id="Flow_067kzcb_di" bpmnElement="Flow_067kzcb">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="592" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bsg16n_di" bpmnElement="Flow_1bsg16n">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vjlnq7_di" bpmnElement="Flow_1vjlnq7">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13kua9i_di" bpmnElement="Flow_13kua9i">
+        <di:waypoint x="480" y="157" />
+        <di:waypoint x="480" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ej11rx_di" bpmnElement="Flow_0ej11rx">
+        <di:waypoint x="480" y="330" />
+        <di:waypoint x="480" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lvo1jx_di" bpmnElement="Activity_1r0gx7m">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17n9vq0_di" bpmnElement="Activity_1q4h6nv">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07rpc8e_di" bpmnElement="Event_07rpc8e">
+        <dc:Bounds x="592" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1k5r0mn_di" bpmnElement="Activity_1u3rtby">
+        <dc:Bounds x="430" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09dpt3k_di" bpmnElement="Activity_125xuob">
+        <dc:Bounds x="430" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
